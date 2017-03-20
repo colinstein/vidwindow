@@ -1,4 +1,4 @@
-# Vidwindow
+# Vidwindow [![CircleCI](https://circleci.com/gh/colinstein/vidwindow.svg?style=shield)](https://circleci.com/gh/colinstein/vidwindow) [![codecov](https://codecov.io/gh/colinstein/vidwindow/branch/master/graph/badge.svg)](https://codecov.io/gh/colinstein/vidwindow)
 A graphical interface for scripting languages and other command line programs.
 
 Reads from a file-system pipe and then uses the data read to draw some pixels in
@@ -30,10 +30,10 @@ application which writes to a FIFO, and then launch Vidwindow and specify that
 same FIFO along with Width and Height information to create an interface.
 
   * `vidwindow /tmp/screen.fifo`: Run Vidwindow listening to `/tmp/screen.fifo`.
-  * `brainfuck -w 320 -h 240 /tmp/screen.fio`: Run Vidwindow with a specific
+  * `vidwindow -w 320 -h 240 /tmp/screen.fio`: Run Vidwindow with a specific
   width (320 pixels) and height(240 pixels) listening to a `/tmp/screen.fifo`.
-  * `brainfuck -v`: display version information.
-  * `brainfuck -h`: display help.
+  * `vidwindow -v`: display version information.
+  * `vidwindow -h`: display help.
 
 ### Use as a Library
 Library use is not really intended, but if you find it necessary then you can
@@ -45,7 +45,7 @@ accomplish that in the usual way:
   ```ruby
   require "vidwindow"
   vw = VidWindow::Screen.new(file: "somefile.fifo")
-  bfi.show
+  vw.show
   ```
 
 *Note:* This feature is still a work in progress.

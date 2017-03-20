@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby -w
+require "vidwindow"
+
+puts "Hello World"
