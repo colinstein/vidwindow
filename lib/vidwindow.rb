@@ -1,5 +1,6 @@
+require "vidwindow/fifo"
 require "vidwindow/version"
+require "vidwindow/window"
 
 module Vidwindow
-  # Your code goes here...
 end
