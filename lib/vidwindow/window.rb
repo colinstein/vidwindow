@@ -1,15 +1,16 @@
 require "gosu"
+
 module Vidwindow
 
   class Window < Gosu::Window
 
     DEFAULT_WIDTH = 3
     DEFAULT_HEIGHT = 3
-    DEFAULT_DEPTH = 1 # bytes per pixl
     PIXEL_SCALE = 200
-    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, depth: DEFAULT_DEPTH, source:)
+
+    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, source:)
       @needs_redraw = true
-      @memory = Memory.new(size: (width * height * depth), source: source)
+      @memory = Memory.new(size: (width * height), source: source)
       @memory_hash = @memory.hash
       super(width.to_i * PIXEL_SCALE, height.to_i * PIXEL_SCALE, {
         update_interval: (1.0/30.0),
@@ -30,7 +31,7 @@ module Vidwindow
       sprintf("0xff%0x%0x%0x", color, color, color).to_i(16)
     end
 
-    def pixel(x,y,color)
+    def draw_pixel(x,y,color)
       x *= PIXEL_SCALE
       y *= PIXEL_SCALE
       output_color = render_color(color)
@@ -45,7 +46,7 @@ module Vidwindow
     def draw
       @memory.cells.each_slice(width/PIXEL_SCALE).with_index do |row, y|
         row.each.with_index do |col, x|
-          pixel(x,y,col)
+          draw_pixel(x,y,col)
         end
       end
     end
