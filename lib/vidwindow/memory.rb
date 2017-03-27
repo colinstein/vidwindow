@@ -1,9 +1,17 @@
+require "forwardable"
+
 module Vidwindow
   class Memory
+    extend Forwardable
+
     DEFAULT_SIZE = 320 * 200
     DEFAULT_VALUE = 0
 
-    attr_reader :cells
+    def_delegator :@cells, :each
+    def_delegator :@cells, :hash
+    def_delegator :@cells, :fetch, :read
+    def_delegator :@cells, :[]=, :write
+    def_delegator :@cells, :each_slice, :each_row
 
     def initialize(size: DEFAULT_SIZE, value: DEFAULT_VALUE, source:)
       raise ArgumentError.new("memory too small") if size <= 0

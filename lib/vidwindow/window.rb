@@ -4,15 +4,16 @@ module Vidwindow
 
   class Window < Gosu::Window
 
-    DEFAULT_WIDTH = 3
-    DEFAULT_HEIGHT = 3
-    PIXEL_SCALE = 200
+    DEFAULT_WIDTH = 160
+    DEFAULT_HEIGHT = 144
+    DEFAULT_SCALE = 8
 
-    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, source:)
-      @needs_redraw = true
+    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scale: DEFAULT_SCALE, source:)
+      @needs_redraw = true # we can refactor this out
       @memory = Memory.new(size: (width * height), source: source)
       @memory_hash = @memory.hash
-      super(width.to_i * PIXEL_SCALE, height.to_i * PIXEL_SCALE, {
+      @scale = scale
+      super(width.to_i * scale, height.to_i * scale, {
         update_interval: (1.0/30.0),
         fullscreen: false,
       })
@@ -21,8 +22,8 @@ module Vidwindow
 
     def update
       @memory.update
-      if @memory.cells.hash != @memory_hash
-        @memory_hash = @memory.cells.hash
+      if @memory.hash != @memory_hash
+        @memory_hash = @memory.hash
         @needs_redraw = true
       end
     end
@@ -32,19 +33,19 @@ module Vidwindow
     end
 
     def draw_pixel(x,y,color)
-      x *= PIXEL_SCALE
-      y *= PIXEL_SCALE
+      x *= @scale
+      y *= @scale
       output_color = render_color(color)
       draw_quad(
-        x,             y,             output_color,
-        x+PIXEL_SCALE, y,             output_color,
-        x+PIXEL_SCALE, y+PIXEL_SCALE, output_color,
-        x,             y+PIXEL_SCALE, output_color,
+        x,        y,        output_color,
+        x+@scale, y,        output_color,
+        x+@scale, y+@scale, output_color,
+        x,        y+@scale, output_color,
       )
     end
 
     def draw
-      @memory.cells.each_slice(width/PIXEL_SCALE).with_index do |row, y|
+      @memory.each_row(width/@scale).with_index do |row, y|
         row.each.with_index do |col, x|
           draw_pixel(x,y,col)
         end
