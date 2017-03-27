@@ -1,55 +1,64 @@
 #!/usr/bin/env ruby -w
 require "vidwindow"
+source = Vidwindow::Fifo.new("/Users/colin/testfifo")
+Vidwindow::Window.new(source: source).show
 
-class Buffers
-  DEFAULT_FILE = "/Users/colin/testfifo"
-  BUFFER_SIZE = 3
-  BUFFER_COUNT = 2
+#source = Vidwindow::Fifo.new("/Users/colin/testfifo")
+#memory = Vidwindow::Memory.new(size: 10, source: source)
+#while true
+#  memory.update
+#  puts memory.cells.inspect
+#end
 
-  attr_reader :fifo
+#class Buffers
+#  DEFAULT_FILE = "/Users/colin/testfifo"
+#  BUFFER_SIZE = 3
+#  BUFFER_COUNT = 2
+#
+#  attr_reader :fifo
+#
+#  def initialize(file: DEFAULT_FILE, count: BUFFER_COUNT, size: BUFFER_SIZE)
+#    @buffers = [[]] * BUFFER_COUNT
+#    @buffer_indices = (0...count).cycle
+#    @index = @buffer_indices.next
+#    @display_index = @index
+#    @fifo = Vidwindow::Fifo.new(DEFAULT_FILE)
+#  end
+#
+#  def back_buffer
+#    @buffers[@index]
+#  end
+#
+#  def front_buffer
+#    @buffers[@display_index]
+#  end
+#
+#  def swap_buffers
+#    @display_index = @index
+#    @index = @buffer_indices.next
+#    @buffers[@index] = []
+#  end
+#
+#  def add_to_buffer(value)
+#    raise "Buffer overflow" if back_buffer.size + value.size > BUFFER_SIZE
+#    @buffers[@index] += value
+#  end
+#
+#  def update
+#    new_bytes = fifo.read(bytes_to_read)
+#    return if new_bytes.nil?
+#    add_to_buffer(new_bytes.bytes)
+#    swap_buffers if back_buffer.length == BUFFER_SIZE
+#  end
+#
+#  private
+#
+#  def bytes_to_read
+#    BUFFER_SIZE - back_buffer.length 
+#  end
+#
+#end
 
-  def initialize(file: DEFAULT_FILE, count: BUFFER_COUNT, size: BUFFER_SIZE)
-    @buffers = [[]] * BUFFER_COUNT
-    @buffer_indices = (0...count).cycle
-    @index = @buffer_indices.next
-    @display_index = @index
-    @fifo = Vidwindow::Fifo.new(DEFAULT_FILE)
-  end
-
-  def back_buffer
-    @buffers[@index]
-  end
-
-  def front_buffer
-    @buffers[@display_index]
-  end
-
-  def swap_buffers
-    @display_index = @index
-    @index = @buffer_indices.next
-    @buffers[@index] = []
-  end
-
-  def add_to_buffer(value)
-    raise "Buffer overflow" if back_buffer.size + value.size > BUFFER_SIZE
-    @buffers[@index] += value
-  end
-
-  def update
-    new_bytes = fifo.read(bytes_to_read)
-    return if new_bytes.nil?
-    add_to_buffer(new_bytes.bytes)
-    swap_buffers if back_buffer.length == BUFFER_SIZE
-  end
-
-  private
-
-  def bytes_to_read
-    BUFFER_SIZE - back_buffer.length 
-  end
-
-end
-
-b = Buffers.new
-b.update while true
+#b = Buffers.new
+#b.update while true
 #Vidwindow::Window.new(fifo: "~/testfifo")

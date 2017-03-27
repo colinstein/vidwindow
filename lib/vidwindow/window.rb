@@ -3,39 +3,51 @@ module Vidwindow
 
   class Window < Gosu::Window
 
-    DEFAULT_WIDTH = 320
-    DEFAULT_HEIGHT = 200
+    DEFAULT_WIDTH = 3
+    DEFAULT_HEIGHT = 3
     DEFAULT_DEPTH = 1 # bytes per pixl
-    DEFAULT_SCALE = 2
-
-    attr_reader :scale
-
-    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scale: DEFAULT_SCALE, depth: DEFAULT_DEPTH, fifo:)
+    PIXEL_SCALE = 200
+    def initialize(width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, depth: DEFAULT_DEPTH, source:)
       @needs_redraw = true
-      @scale = scale
-      @fifo = fifo
-      @memory = Array.new(width * height)
-      super(width.to_i * scale, height.to_i * scale, {
+      @memory = Memory.new(size: (width * height * depth), source: source)
+      @memory_hash = @memory.hash
+      super(width.to_i * PIXEL_SCALE, height.to_i * PIXEL_SCALE, {
         update_interval: (1.0/30.0),
         fullscreen: false,
       })
       self.caption = "Vidwindow"
     end
 
-    def width=(value)
-      super(value * scale)
-    end
-
-    def height=(value)
-      super(value * scale)
-    end
-
     def update
-      # here we'll check for data on the fifo
+      @memory.update
+      if @memory.cells.hash != @memory_hash
+        @memory_hash = @memory.cells.hash
+        @needs_redraw = true
+      end
+    end
+
+    def render_color(color)
+      sprintf("0xff%0x%0x%0x", color, color, color).to_i(16)
+    end
+
+    def pixel(x,y,color)
+      x *= PIXEL_SCALE
+      y *= PIXEL_SCALE
+      output_color = render_color(color)
+      draw_quad(
+        x,             y,             output_color,
+        x+PIXEL_SCALE, y,             output_color,
+        x+PIXEL_SCALE, y+PIXEL_SCALE, output_color,
+        x,             y+PIXEL_SCALE, output_color,
+      )
     end
 
     def draw
-      # this is where we'll blit out a bunch of pixels
+      @memory.cells.each_slice(width/PIXEL_SCALE).with_index do |row, y|
+        row.each.with_index do |col, x|
+          pixel(x,y,col)
+        end
+      end
     end
 
     def needs_cursor?

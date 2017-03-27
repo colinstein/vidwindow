@@ -13,8 +13,8 @@ module Vidwindow
       at_exit { @fifo.close }
     end
 
-    def read(bytes)
-      @fifo.read_nonblock(bytes)
+    def read(bytes=nil)
+      @fifo.read_nonblock(bytes).bytes
     rescue IO::EAGAINWaitReadable
     end
     # This seems like a good spot for io::read_nonblock
