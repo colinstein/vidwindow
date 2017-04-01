@@ -11,6 +11,8 @@ machine:
 
 dependencies:
   pre:
+    - "sudo apt-get update"
+    - "sudo apt-get install libsdl2-dev libsdl2-ttf-dev libpango1.0-dev libgl1-mesa-dev libopenal-dev libsndfile-dev"
     - "gem install bundler -v 1.14.6"
     - "bundle install"
 
